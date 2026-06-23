@@ -1,0 +1,25 @@
+name: hot_gas
+
+#Install:
+#   conda env create -f environment.yml
+#   conda activate hot_gas
+
+channels: 
+ - conda-forge
+
+dependencies:
+ - python3.11
+
+ # ── Core scientific stack ─────────────────────────────────────────────────
+  - numpy
+  - scipy
+  - matplotlib
+
+  # ── Astronomy (conda-forge builds available for Python 3.11) ─────────────
+  - astropy>=6.0      # tables, units, coordinates, FITS, cosmology
+  - astroquery        # online queries: Gaia, SDSS, NED, VizieR, SIMBAD
+  - healpy            # HEALPix pixelisation of the sphere
+  - specutils         # spectral analysis
+  - photutils         # aperture photometry
+  - h5py              # HDF5
+  - pyyaml            # YAML config files
