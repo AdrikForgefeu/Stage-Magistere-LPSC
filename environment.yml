@@ -4,16 +4,18 @@ name: hot_gas
 #   conda env create -f environment.yml
 #   conda activate hot_gas
 
-channels: 
- - conda-forge
+channels:
+  - conda-forge
 
 dependencies:
- - python3.11
+  - python=3.11
 
- # ── Core scientific stack ─────────────────────────────────────────────────
+  # ── Core scientific stack ─────────────────────────────────────────────────
   - numpy
   - scipy
   - matplotlib
+  - pandas
+  - numba
 
   # ── Astronomy (conda-forge builds available for Python 3.11) ─────────────
   - astropy>=6.0      # tables, units, coordinates, FITS, cosmology
