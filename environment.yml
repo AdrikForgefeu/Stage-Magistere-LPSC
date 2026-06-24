@@ -8,7 +8,8 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.13
+  - python==3.13
+    - git+https://url.com/private_repo.git@main
 
   # ── Core scientific stack ─────────────────────────────────────────────────
   - numpy
