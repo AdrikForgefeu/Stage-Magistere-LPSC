@@ -12,6 +12,8 @@ dependencies:
 
   # ── Core scientific stack ─────────────────────────────────────────────────
   - numpy
+  - jax
+  - jax.numpy
   - scipy
   - matplotlib
   - pandas
