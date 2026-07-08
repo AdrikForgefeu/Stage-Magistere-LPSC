@@ -1,0 +1,126 @@
+\documentclass[a4paper, french, twoside, twocolumn, 11 pt]{article}
+
+% Language setting
+% Replace `english' with e.g. `french' to change the document language
+\usepackage[french]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{graphicx}
+\usepackage{siunitx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{pgfplots}
+%\usepackage{tkz-euclide}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage[european, straightvoltages, RPvoltages]{circuitikz}
+%\usetikzlibrary{babel}
+\usepackage{indentfirst}
+%\usepackage{esint}
+\usepackage{fancyhdr}
+%\\
+\usepackage{amsfonts, amsmath, amssymb}
+\usepackage{subcaption}
+%\usepackage[export]{adjustbox}
+\usepackage{lipsum}
+%\usepackage{mathtools}
+%\usepackage{tkz-tab}
+%\usepackage{longtable}
+%\usepackage[cyr]{aeguill}
+%\usepackage{xspace}
+%\usepackage{titling}
+%\usepackage[absolute,overlay]{textpos}
+%\usepackage{etoc}
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{nicefrac}
+\usepackage{sectsty}
+\usepackage[autostyle=true, french=guillemets]{csquotes}
+%\pgfplotsset{compat=newest}
+
+%Mathematical operators
+\DeclareMathOperator{\e}{e}
+\newcommand{\deriv}{\mathrm{d}}
+
+%Bibliography
+%\usepackage[
+%backend=biber,
+%style=authortitle,
+%sorting=nty
+%]{biblatex}
+%\addbibresource{sample.bib}
+
+%Style
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[C]{\textsc{ }}
+\fancyhead[R]{}
+\fancyfoot[RO, LE]{\emph{\thepage}}
+
+\fancypagestyle{1erepage}{
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[RO, LE]{\footnotesize{Compilé avec pdf\LaTeX}}
+\fancyfoot[RE, LO]{}
+\fancyfoot[RO, LE]{}
+}
+
+\def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
+\let\endchangemargin=\endlist
+
+\allsectionsfont{\centering}
+
+\begin{document}
+\newpage
+\thispagestyle{1erepage}
+\title{\textbf{Stage Magistère\\\LARGE Modélisation d'un gaz chaud au sein d'un halo galactique\\[0.5em]}}
+\author{\normalsize\textbf{Tibor \textsc{Donin de Rosière}}\\\vspace{-0.5em}
+    \footnotesize\emph{Étudiant en L3 Magistère de Physique}\\\vspace{-0.5em}
+    \footnotesize\emph{Université Grenoble Alpes, Laboratoire de Physique Subatomique et de Cosmologie, F-38026 Grenoble, France}}
+    \date{}
+
+\twocolumn[{
+\vspace{-3em}
+\maketitle
+\begin{abstract}
+    \vspace{-1em}
+        %\begin{spacing}{0.9}
+            \emph
+            {\lipsum[3]}
+        %\end{spacing}
+\end{abstract}
+\vspace{3em}
+}]
+\thispagestyle{1erepage}
+\section{Introduction}
+La formation d'halos galactiques est un phénomène se déroulant à différentes échelles. Les champs gravitationnelles à grandes échelles contraignent les trajectoires de la matière, formant de riches structures composé de matière noire et ordinaire, plus communément appelé baryonique tel que des filaments ou des galaxies. De plus, les noyaux galactiques actifs (NGA) aux centres des galaxies massives et les supernovaes libèrent de grandes quantités d'énergie sous la forme de jets et de vents galactiques très rapide pouvant impacter la distribution de baryons et de matière noire initialement présente. Du fait que ces jets et vents rapides poussent le gaz chaud diffus hors de l'halo, perturbant sa température et sa densité, cela impacte gravitationnellemnt la distribution de matière noire. Il y a donc un effet de rétroaction corrélé avec cet expulsion du gaz chaud sur la distribution de l'ensemble de la matière (GODMAX). Les galaxies satellites sont décentrés par rapport à leurs halos hôtes et se trouvent généralement dans des hôtes plus massifs par rapport à ceux dont le centre présente une masse stellaire similaire (mccarthy2025). Les flux sortants transportent le gaz du centre du halo vers la périphérie, ce qui rend le gaz moins dense au centre et augmente l'intensité de la rétroaction. On peut supposer que, en raison de la structure anisotropique des flux sortants, la redistribution du gaz est elle aussi anisotrope, transportant davantage de gaz vers les régions de faible densité que vers celles de forte densité, et rendant la distribution globale du gaz plus sphérique (Ondaro-Mallea2025). Par le biais de la diffusion Compton, le gaz ionisé présent autour des galaxies et des amas laisse plusieurs empreintes distinctes sur le rayonnement du fond diffus cosmologique (ou Cosmic Microwave Background CMB en anglais). Les deux effets principaux sont les décalages Doppler des photons du CMB dus au mouvement global du gaz, l'effet cinématique de Sunyaev-Zeldovich (kSZ), et ceux dus à la dispersion des vitesses du gaz, c'est-à-dire l'effet thermique de Sunyaev-Zeldovich (tSZ).
+Le projet sur lequel travaille mon tuteur de stage est un module Python 3.11+ intitulé \verb|hod_mod| pour la modélisation prospective de l'agrégation des galaxies, de lentillage gravitationnelle faible et des corrélations croisés galaxie $\times$ gaz à partir de modèles d'occupation des halos (Halo Occupation Distribution, HOD) et de modèle SMHR. Sur l'ensemble de ces travaux, l'effet kSZ n'a pas été pris en compte dans les simulations des corrélations croisés, ce qui m'a mené à poser la problématique de l'impact des électrons libres dans le gaz chaud diffus sur le rayonnement du CMB.
+
+La structure de ce rapport est la suivante : dans la section 2, nous décrivons notre modèle théorique d'halo galactique et de gaz chaud avec les hypothèses admises et leurs éventuelles justifications, et les calculs des observables. Nous décrivons également comment ces observables ont eté implanté dans des simulations hydrodynamiques. En section 3, nous présentons les résultats de ces simulations et les discutons, et dans la Section 4, nous concluons.
+\section{Méthodes}
+Les photons du CMB subissent une diffusion Compton inverse sur le gaz présent autour des galaxies et des amas. À cause du mouvement du bulbe et de la dispersion de vitesse du gaz, ces interactions impliquent un effet Doppler à ces photons : l'effet kSZ et tSZ.
+Ces deus signaux peuvent être modélisés en termes de fluctuations de température comme décrit ci-dessous.
+Les fluctuations de température sont données par
+\begin{equation}
+\frac{\Delta T_\text{tSZ}}{T_\text{CMB}}=f(x)\, y
+\end{equation}
+où $f(x) = x\coth\!\frac{x}{2}-4$ est la dépendance vis-à-vis de la fréquence, sans prendre en compte les corrections relativistes. $T_\text{CMB}$ est la température du CMB, $k_B$ la constante de Boltzmann.
+L'amplitude résultante de cette distorsion spectrale est le paramètre adimensionnel $y$-Compton (ref Sunyaev-1972) mesuré dans $\theta$, à une distance angulaire d'un redshift $z$, $d_A(z)$ est
+\begin{equation}
+y = \int \sigma_T\, n_e\, \frac{k_B T_e}{m_e c^2}\, \deriv l = \frac{\sigma_T}{m_e c^2}\int P_e(\sqrt{l^2+d_A(z)^2|\theta|^2})\, \deriv l
+\end{equation}
+où $\sigma_T$ est la section efficace de Thomson, $P_\text{e}=n_\text{e}k_BT_\text{e}$ la pression électronique et $\deriv l$ est la distance physique de la ligne de visée.
+
+L'effet kSZ est proportionnelle à la densité numérique d'électron $n_e$ et à la vitesse péculaire $v_p$ du gaz.
+Cette diffusion inverse modifie la température du CMB selon la formule suivante
+\begin{equation}
+\frac{\Delta T_\text{kSZ}}{T_\text{CMB}}=\frac{\sigma_\text{T}}{c}\int_\text{los} \deriv l\,e^{-\tau} n_\text{e} \; v_\text{p}
+\end{equation}
+où $\sigma_\text{T}$ est la section efficace de Thompson
+\section{Résultats}
+\section{Conclusion et perspectives}
+\section{Remerciements}
+\end{document}
