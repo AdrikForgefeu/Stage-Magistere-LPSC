@@ -74,24 +74,20 @@ def beta(M500, Mc, mu):
     """
     return (3*(M500/Mc)**mu/(1+(M500/Mc)**mu))
 
-def r500(M500):
-    rho_c = float(WMAP7.critical_density(0).to(u.kg/u.m**3)/(u.kg/u.m**3))
-    return (3*M500/(4*np.pi*500*rho_c))**(1/3)  #m
-
-def R500c_col(M500):
+def R500c(M500):
     M500c_h = M500*h0/M_sun
     R500c_h = mass_so.M_to_R(M500c_h, z, '500c')
     R500c = R500c_h/h0
     return R500c*pc*1e3
 
 def R500_kpc(M500):
-    return R500c_col(M500)/(pc*1e3)
+    return R500c(M500)/(pc*1e3)
 
 def R500_Mpc(M500):
-    return R500c_col(M500)/(pc*1e6)
+    return R500c(M500)/(pc*1e6)
 
 def r500vir(M500c):
-    Mv, Rv, cv = mass_defs.changeMassDefinition(M200c, 1, z, '500c', 'vir')
+    Mv, Rv, cv = mass_defs.changeMassDefinition(M500c, 1, z, '500c', 'vir')
     return Rv
 
 def gas_density(r, M500, Mc, mu, delta):
@@ -109,7 +105,7 @@ def gas_density(r, M500, Mc, mu, delta):
     
     Returns float or array-like : gas mass density rho_g
     """
-    rho_g = rho_0*(1+(r/(theta_c*R500c_col(M500)))**alpha)**(-beta(M500, Mc, mu)/alpha)*(1+(r/(eps(M500)*R500c_col(M500)))**gamma)**(-delta/gamma)  #kg.m⁻³
+    rho_g = rho_0*(1+(r/(theta_c*R500c(M500)))**alpha)**(-beta(M500, Mc, mu)/alpha)*(1+(r/(eps(M500)*R500c(M500)))**gamma)**(-delta/gamma)  #kg.m⁻³
     return rho_g
 
 def e_density(r, M500, Mc, mu, delta):
@@ -130,7 +126,7 @@ def opt_depth(M500, Mc, mu, delta, b):
 
     Returns float tau
     """
-    lmax = (5 * R500c_col(M500))  #m
+    lmax = (5 * R500c(M500))  #m
     def integrand_per_m(l):
         r = np.sqrt(b**2 + l**2) #m
         n_e = e_density(r, M500, Mc, mu, delta)  #m⁻³
@@ -167,34 +163,33 @@ def kSZ(vp, M500, Mc, mu, delta, b):
     """
     return cmb_temperature_at_z(z)*vp/const.c*opt_depth(M500, Mc, mu, delta, b)
 
+
+
 b_grid = np.linspace(0.02, 3.0, 40)*1e6*pc  #m
+tau_grid = np.array([opt_depth(M500, Mc, mu, delta, b) for b in b_grid])
 theta = (b_grid/(cosmo.angularDiameterDistance(z=z)*1e6*pc))
 theta_arcmin = np.degrees(theta) * 60
 
-gradient = np.linspace(0, 1, len(M500_arr))
-colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(M500_arr))]
+r = np.linspace(1e3*pc, 1e6*pc, 500)
+plt.figure()
+plt.loglog(r/(1e3*pc),
+           e_density(r, M500, Mc, mu, delta))
+plt.xlabel(r'$r [kpc]$'); plt.ylabel(r'$n_e(r)$ [m$^{-3}$]')
+plt.title(f'Electron density, M500={M500/M_sun:.0e}, z={z}'); plt.savefig('ksz_ne_profile.png', dpi=130)
+plt.show()
 
 
+plt.figure()
+plt.semilogy(theta_arcmin, tau_grid)
+plt.xlabel(r'$\theta$ [arcmin]'); plt.ylabel(r'Optical depth $\tau$')
+plt.title(f'kSZ profile, M500={M500/M_sun:.0e} Msun, z={z}')
+plt.savefig('ksz_tau_profile.png', dpi=130)
+plt.show()
 
-fig, axes = plt.subplots(1, 4, figsize=(25, 125/12))
+
+fig, axes = plt.subplots(1, 2, figsize=(25, 125/12))
 
 ax = axes[0]
-ax.set_xlabel(r'$\theta$ [arcmin]')
-ax.set_ylabel(r'$T_{kSZ}$ [$\mu$K.arcmin²]')
-ax.set_title(r'Virial mass $M_{500}$' '\n' 
-            rf'Fixed parameters :' '\n' r'$\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)}' '\n' rf'$\mu =$ {mu}' '\n' rf'$\delta=$ {delta}')
-#ax.set_xlim
-#ax.set_ylim
-for mass in M500_arr:
-    TkSZ = np.array([kSZ(vp, mass, Mc, mu, delta, b)*1e6 for b in b_grid])
-    tauint_SZ = TkSZ*0
-    for i in range(len(TkSZ)):
-        for j in range(i):
-            tauint_SZ[i] += ((R500_kpc(mass)*10**(np.log10(theta[j])+0.05))**2-(R500_kpc(mass)*10**(np.log10(theta[j])-0.05))**2)*np.pi*TkSZ[j]
-    ax.semilogy(theta_arcmin, tauint_SZ, label=r'$\log{M_{500}/M_☉}$ = ' f'{np.log10(mass/M_sun)}', color=colors[int(np.where(M500_arr==mass)[0][0])])
-ax.legend()
-
-ax = axes[1]
 gradient = np.linspace(0, 1, len(Mc_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(Mc_arr))]
 ax.set_xlabel(r'$\theta$ [arcmin]')
@@ -211,24 +206,7 @@ for mass in Mc_arr:
     ax.semilogy(theta_arcmin, tauint_SZ, label=r'$\log{M_c/M_☉}$ = ' f'{np.log10(mass/M_sun)}', color=colors[int(np.where(Mc_arr==mass)[0][0])])
 ax.legend()
 
-ax = axes[2]
-gradient = np.linspace(0, 1, len(mu_arr))
-colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(mu_arr))]
-ax.set_xlabel(r'$\theta$ [arcmin]')
-ax.set_title(rf'Steepness transition $\mu$''\n'
-            rf'Fixed parameters :' '\n' r'$\log{M_{500}/M_☉} =$' f'{np.log10(M500/M_sun)}' '\n' r'$\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)}' '\n' rf'$\delta=$ {delta}')
-#ax.set_xlim
-#ax.set_ylim
-for steep in mu_arr:
-    TkSZ = np.array([kSZ(vp, M500, Mc, steep, delta, b)*1e6 for b in b_grid])
-    tauint_SZ = TkSZ*0
-    for i in range(len(TkSZ)):
-        for j in range(i):
-            tauint_SZ[i] += ((R500_kpc(M500)*10**(np.log10(theta[j])+0.05))**2-(R500_kpc(M500)*10**(np.log10(theta[j])-0.05))**2)*np.pi*TkSZ[j]
-    ax.semilogy(theta_arcmin, tauint_SZ, label=r'$\mu$ = ' f'{steep}', color=colors[int(np.where(mu_arr==steep)[0][0])])
-ax.legend()
-
-ax = axes[3]
+ax = axes[1]
 gradient = np.linspace(0, 1, len(delta_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(delta_arr))]
 ax.set_xlabel(r'$\theta$ [arcmin]')
