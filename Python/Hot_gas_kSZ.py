@@ -24,8 +24,8 @@ log10Mc_arr = np.linspace(11, 15, 5)
 Mc_arr = (10**log10Mc_arr)*u.solMass.to(u.kg)
 Mc = float((10**13)*u.solMass.to(u.kg))
 logM500_arr = np.linspace(11, 15, 5)
-M500_arr = (10**logM200_arr)*u.solMass.to(u.kg)
-M500 = (10**logM200_arr[2])*u.solMass.to(u.kg)
+M500_arr = (10**logM500_arr)*u.solMass.to(u.kg)
+M500 = (10**logM500_arr[2])*u.solMass.to(u.kg)
 mu_arr = np.linspace(0, 2, 3)
 mu = 1
 delta_arr = np.linspace(1, 11, 11)
@@ -216,7 +216,7 @@ gradient = np.linspace(0, 1, len(mu_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(mu_arr))]
 ax.set_xlabel(r'$\theta$ [arcmin]')
 ax.set_title(rf'Steepness transition $\mu$''\n'
-            rf'Fixed parameters :' '\n' r'$\log{M_{500}/M_☉} =$' f'{np.log10(M200/M_sun)}' '\n' r'$\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)}' '\n' rf'$\delta=$ {delta}')
+            rf'Fixed parameters :' '\n' r'$\log{M_{500}/M_☉} =$' f'{np.log10(M500/M_sun)}' '\n' r'$\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)}' '\n' rf'$\delta=$ {delta}')
 #ax.set_xlim
 #ax.set_ylim
 for steep in mu_arr:
