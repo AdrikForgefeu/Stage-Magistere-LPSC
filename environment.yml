@@ -17,6 +17,7 @@ dependencies:
   - matplotlib
   - pandas
   - numba
+  - colossus
 
   # ── Astronomy (conda-forge builds available for Python 3.11) ─────────────
   - astropy>=6.0      # tables, units, coordinates, FITS, cosmology
