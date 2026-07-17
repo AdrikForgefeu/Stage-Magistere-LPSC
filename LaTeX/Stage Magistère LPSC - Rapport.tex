@@ -38,7 +38,9 @@
 \usepackage{multirow}
 \usepackage{nicefrac}
 \usepackage{sectsty}
+\usepackage{titlesec}
 \usepackage[autostyle=true, french=guillemets]{csquotes}
+\usepackage{appendix}
 %\pgfplotsset{compat=newest}
 
 %Mathematical operators
@@ -71,7 +73,13 @@ sorting=nty
 \def\changemargin#1#2{\list{}{\rightmargin#2\leftmargin#1}\item[]}
 \let\endchangemargin=\endlist
 
+\titlespacing*{\section}
+{0pt}{2.5ex plus 1ex minus .0ex}{0.0ex plus .0ex}
 \allsectionsfont{\centering}
+
+%\titleformat{\subsection}{\normalfont\normalsize\normalseries}
+\titlespacing*{\subsection}
+{0pt}{1.5ex plus 0ex minus .0ex}{0.0ex plus .0ex}
 
 \begin{document}
 \newpage
@@ -86,7 +94,7 @@ sorting=nty
 \vspace{-3em}
 \maketitle
 \begin{abstract}
-    \vspace{-1em}
+    %\vspace{-1em}
         %\begin{spacing}{0.9}
             \emph
             {\lipsum[3]}
@@ -96,16 +104,16 @@ sorting=nty
 }]
 \thispagestyle{1erepage}
 \section{Introduction}
-La formation d'halos galactiques est un phénomène se déroulant à différentes échelles. Les champs gravitationnelles à grandes échelles contraignent les trajectoires de la matière, formant de riches structures composé de matière noire et ordinaire, plus communément appelé baryonique tel que des filaments ou des galaxies. De plus, les noyaux galactiques actifs (AGN) aux centres des galaxies massives et les supernovaes libèrent de grandes quantités d'énergie sous la forme de jets et de vents galactiques très rapide pouvant impacter la distribution de baryons initialement présente. Du fait que ces jets et vents rapides poussent le gaz chaud diffus hors de l'halo, perturbant sa température et sa densité, cela impacte gravitationnellement la distribution de matière noire. Il y a donc un effet de rétroaction corrélé avec cet expulsion du gaz chaud sur la distribution de l'ensemble de la matière \cite{pandey2024godmaxmodelinggasthermodynamics}. Les flux sortants transportent le gaz du centre du halo vers la périphérie, ce qui rend le gaz moins dense au centre et augmente l'intensité de la rétroaction. On peut supposer que, en raison de la structure anisotropique des flux sortants, la redistribution du gaz est elle aussi anisotrope, transportant davantage de gaz vers les régions de faible densité que vers celles de forte densité, et rendant la distribution globale du gaz plus sphérique (Ondaro-Mallea2025). Par le biais de la diffusion Compton, le gaz ionisé présent autour des galaxies et des amas laisse plusieurs empreintes distinctes sur le rayonnement du fond diffus cosmologique (ou Cosmic Microwave Background CMB en anglais). Les deux effets principaux sont les décalages Doppler des photons du CMB dus au mouvement global du gaz, l'effet cinématique de Sunyaev-Zeldovich (kSZ), et ceux dus à la dispersion des vitesses du gaz, c'est-à-dire l'effet thermique de Sunyaev-Zeldovich (tSZ).
-Ces deux effets sont utilisés comme observable (réf ?) pour rendre compte de la turbulence de la densité du gaz chaud et notamment de ses électrons qui le compose, ce qui m'a mené à poser la problématique de l'impact des électrons libres dans le gaz chaud diffus sur le rayonnement du CMB. Pour cela, je souhaite modéliser ces deux effets en traçant l'évolution de leurs fluctuations de température $T_\text{kSZ}$ et $T_\text{tSZ}$ correspondantes, en fonction de l'écartement angulaire $\theta$ par rapport au centre du halo, et comparer quantitativement lequel est plus impactant. Pour réaliser ce modèle j'ai, en premier lieu, utilisé le profil de distribution de gaz du modèle dit de baryonification de \cite{schneider2025baryonificationalternativehydrodynamicalsimulations} car il possède plusieurs paramètres ajustables notamment la masse du halo galactique choisi $M_{500}$, où le 500 désigne un facteur de concentration pour calculer la masse contenu dans une sphère avec 500 fois la densité critique de l'univers $\rho_0$. 
+La formation d'halos galactiques est un phénomène se déroulant à différentes échelles. Les champs gravitationnelles à grandes échelles contraignent les trajectoires de la matière, formant de riches structures composé de matière noire et ordinaire, plus communément appelé baryonique, tel que des filaments ou des galaxies. On définit donc le halo comme une composante d'une galaxie qui s'étend au-delà de la partie principale visible de la galaxie. Il est constitué d'un halo stellaire, d'une couronne galactique composé de gaz chaud et d'un halo de matière noire. De plus, les noyaux galactiques actifs (AGN) aux centres des galaxies massives et les supernovaes libèrent de grandes quantités d'énergie sous la forme de jets et de vents galactiques très rapide pouvant impacter la distribution de baryons initialement présente. Du fait que ces jets et vents rapides poussent le gaz chaud diffus hors de l'halo, perturbant sa température et sa densité, cela impacte gravitationnellement la distribution de matière noire. Il y a donc un effet de rétroaction corrélé avec cet expulsion du gaz chaud sur la distribution de l'ensemble de la matière \cite{pandey2024godmaxmodelinggasthermodynamics}. On peut supposer que, en raison de la structure anisotropique des flux sortants, la redistribution du gaz est elle aussi anisotrope, transportant davantage de gaz vers les régions de faible densité que vers celles de forte densité, et rendant la distribution globale du gaz plus sphérique (Ondaro-Mallea2025). Par le biais de la diffusion Compton, le gaz ionisé présent autour des galaxies et des amas laisse plusieurs empreintes distinctes sur le rayonnement du fond diffus cosmologique (ou Cosmic Microwave Background CMB en anglais). Les deux effets principaux sont les décalages Doppler des photons du CMB dus au mouvement global du gaz, l'effet cinématique de Sunyaev-Zeldovich (kSZ), et ceux dus à la dispersion des vitesses du gaz, c'est-à-dire l'effet thermique de Sunyaev-Zeldovich (tSZ).
+Ces deux effets sont utilisés comme observable (réf ?) pour rendre compte de la fluctuation de la densité du gaz chaud et notamment de ses électrons qui le compose, ce qui m'a mené à poser la problématique de l'impact des électrons libres dans le gaz chaud diffus sur le rayonnement du CMB. Pour cela, je souhaite modéliser ces deux effets en traçant l'évolution de leurs fluctuations de température $T_\text{tSZ}$ et $T_\text{kSZ}$ correspondantes, en fonction de l'écartement angulaire $\theta$ par rapport au centre du halo, et comparer quantitativement lequel est plus impactant. Pour réaliser ce modèle, je considère mon système comme étant un halo galactique de forme sphérique avec un rayon $R\simeq1\ \unit{Mpc}$. Le profil de distribution de gaz utilisé est celui du modèle dit de baryonification de \cite{schneider2025baryonificationalternativehydrodynamicalsimulations} car il possède plusieurs paramètres ajustables notamment les valeurs de pentes dans différentes régions de la couronne du gaz, ajustant l'allure graphique du profil. J'utilise les hypothèses du modèle cosmologique $\Lambda$CDM qui est actuellement la description de l'univers la plus en vogue, d'après les mesures de \cite{Planck_2020}. 
 
-La structure de ce rapport est la suivante : dans la section \ref{Section2}, nous décrivons notre modèle théorique d'halo galactique et de gaz chaud avec les hypothèses admises et leurs éventuelles justifications, et les calculs des observables. Nous décrivons également comment ces observables ont eté implanté dans des simulations hydrodynamiques. En section 3, nous présentons les résultats de ces simulations et les discutons, et dans la Section 4, nous concluons.
+La structure de ce rapport est la suivante : dans la section \ref{Section2}, nous décrivons notre modèle théorique d'halo galactique et de gaz chaud avec les hypothèses admises et leurs éventuelles justifications, et les calculs des observables. Nous décrivons également comment ces observables ont eté implanté dans des simulations hydrodynamiques. En section \ref{Section3}, nous présentons les résultats de ces simulations et les discutons, et dans la Section \ref{Section4}, nous concluons.
 \section{Méthodes}
 \label{Section2}
 L'effet Sunyaev-Zeldovich peut être divisé en deux types différents, thermique et cinématique.
 Ces deus signaux peuvent être modélisés en termes de fluctuations de température comme décrit ci-dessous.
 \subsection{Sunyaev-Zeldovich thermique} 
-L'effet Sunyaev-Zeldovich thermique (tSZ) est une distorsion spectrale du CMB produite par la diffusion des photons du CMB sur des électrons chauds du milieu intra-amas (ICM) via l'effet Compton inverse. Ce phénomène fut prédit en 1972 par Rashid Sunyaev et Yakov Zel'dovich. Lorsque les photons du CMB traversent un amas de galaxies contenant du gaz ionisé à haute température ($T_\text{e}\simeq107-108\ \unit{K}$), ils interagissent aves les électrons énergétiques par diffusion Compton.
+L'effet Sunyaev-Zeldovich thermique (tSZ) est une distorsion spectrale du CMB produite par la diffusion des photons du CMB sur des électrons chauds du milieu intra-amas (ICM) via l'effet Compton inverse. Ce phénomène fut prédit en 1972 par Rashid Sunyaev et Yakov Zel'dovich. Lorsque les photons du CMB traversent un amas de galaxies contenant du gaz ionisé à haute température ($T_\text{e}\simeq10^7-10^8\ \unit{K}$), ils interagissent aves les électrons énergétiques par diffusion Compton.
 Les fluctuations de température dû à la dispersion des vitesses du gaz sont données par
 \begin{equation}
 \frac{\Delta T_\text{tSZ}}{T_\text{CMB}}=f(x)\, y
@@ -119,22 +127,7 @@ L'amplitude résultante de cette distorsion spectrale est le paramètre adimensi
 \end{split}
 \end{equation}
 où $\sigma_T$ est la section efficace de Thomson, $P_\text{e}=n_\text{e}k_BT_\text{e}$ la pression électronique et $\deriv l$ est la distance physique de la ligne de visée.
-La pression thermique de l'ICM suit une courbe de profil Navarro-Frenk-White généralisée quasi universelle (\cite{Nagai_2007}), calibrée sur l'échantillon REXCESS par \cite{Arnaud_2010}
-\begin{equation}
-P(r) = P_{500}\; \text{p}(x), \qquad x = r/R_{500},
-\end{equation}
-où $R_{500}$ représente le rayon du halo à 500 fois la densité critique de l'univers $\rho_0$ et avec
-\begin{equation}
-\text{p}(x) = \frac{P_0}{(c_{500}x)^{\gamma}\,\big[1+(c_{500}x)^{\alpha}\big]^{(\beta-\gamma)/\alpha}}
-\end{equation}
-avec les paramètres d'ajustements optimaux $[P_0,c_{500},\gamma,\alpha,\beta] = [8.403\,h_{70}^{-3/2},\,1.177,\,0.3081,\,1.0510,\,5.4905]$ \cite{Arnaud_2010}. La pression caractéristique est
-\begin{equation}
-\begin{split}
-& P_{500} =  1,65\times10^{-3}\,E(z)^{8/3}\times \\
-& \left(\frac{M_{500}}{3\times10^{14}\,h_{70}^{-1}M_\odot}\right)^{2/3} h_{70}^{2}\;\;{\rm keV\,cm^{-3}}
-\end{split}
-\end{equation}
-Le tSZ est corrélé à une pression $P_e = (\mu/\mu_e)\,P$ avec les masses moléculaires moyennes $\mu\simeq0,59$ et $\mu_e\simeq1,14$ pour un plasma entièrement ionisé
+La pression thermique de l'ICM suit une courbe de profil Navarro-Frenk-White généralisée quasi universelle (\cite{Nagai_2007}), calibrée sur l'échantillon REXCESS par \cite{Arnaud_2010}.
 
 \subsection{Sunyaev-Zeldovich cinématique}
 L'effet Sunyaev-Zeldovich cinématique (kSZ) est quand à lui, un effet secondaire où les photons du CMB interagissent avec des électrons de hautes énergies dû au mouvement du bulbe galactique. Il est proportionnelle à la densité numérique d'électron $n_\text{e}$ et à la vitesse péculaire $v_p$ du gaz.
@@ -143,7 +136,74 @@ Cette diffusion inverse modifie la température du CMB selon, d'après \cite{Sun
 \label{eqDeltakSZ}
 \frac{\Delta T_\text{kSZ}}{T_\text{CMB}}=\frac{\sigma_\text{T}}{c}\int_\text{los} \deriv l\,e^{-\tau} n_\text{e} \; v_\text{p}
 \end{equation}
-Nous supposons que le gaz se déplace de manière cohérente avec la vitesse globale du halo (voir réf. \cite{Hadzhiyska2023}), ce qui permet d'éliminer la vitesse particulière $v_p$ de l'intégrale dans la ligne de visée. Cette simplification est couramment utilisée dans les analyses par empilement, où les vitesses individuelles ne sont pas connues avec précision. Au lieu de cela, le signal attendu est modélisé à l'aide de la vitesse radiale quadratique moyenne (RMS) de l'échantillon de halos, que nous fixons à $v_r = 1,06 \times 10^{-3}c$, conformément à la référence \cite{Amodeo2021}. La profondeur optique $\tau$ le long de la ligne de visée due à la diffusion de Thompson entre l'observateur et le redshift $z$ est définit comme suit :
+Nous supposons que le gaz se déplace de manière cohérente avec la vitesse globale du halo (voir réf. \cite{Hadzhiyska2023}), ce qui permet d'éliminer la vitesse particulière $v_p$ de l'intégrale dans la ligne de visée. Cette simplification est couramment utilisée dans les analyses par empilement, où les vitesses individuelles ne sont pas connues avec précision. Au lieu de cela, le signal attendu est modélisé à l'aide de la vitesse radiale quadratique moyenne (RMS) de l'échantillon de halos, que nous fixons à $v_r = 1,06 \times 10^{-3}c$, conformément à la référence \cite{Amodeo2021}.  La densité numérique d'électrons dans l'équation \ref{eqDeltakSZ} peut être calculée à partir de
+\begin{equation}
+n_\mathrm{e} = \frac{X_\mathrm{H} + 1}{2 m_\mathrm{amu}} \rho_\mathrm{gas}
+\end{equation}
+où $X_\mathrm{H}$ est la fraction massique d'hydrogène dans l'univers et $m_\mathrm{amu}$ est l'unité atomique de masse. La densité massique du gaz $\rho_\mathrm{gas}$ est obtenu à partir du modèle de baryonification de \cite{schneider2025baryonificationalternativehydrodynamicalsimulations}.
+\begin{equation}
+\begin{split}
+& \rho_\text{gas}(r) = \rho_\text{gas,0}\left[1+\left(\frac{r}{\theta_{c}r_{500c}}\right)^{\alpha}\right]^{-\beta(M_{500})/\alpha} \\
+& \left[1+\left(\frac{r}{\varepsilon r_{500c}}\right)^{\gamma}\right]^{\frac{\delta}{\gamma}}
+\end{split}
+\end{equation}
+Ici, $\theta_c$ est le paramètre du rayon du noyau, $\epsilon$ le paramètre du rayon tronqué avec $\varepsilon=\varepsilon_0+\varepsilon_1\nu$ où $\nu=\frac{\delta_c}{\sigma(M_{500})}$ est le peak height du halo. Par simplification du modèle, j'utilise les valeurs admises dans \cite{kovac2025baryonificationiiconstrainingfeedback} avec $\theta_c=0,3$; $\varepsilon_0 = 4$; $\varepsilon_1=0,5$ et $\delta_c=1,686$. Ensuite, $\beta(M_{500})$ détermine la pente du profil tel que
+\begin{equation}
+\beta(M_{500})=\frac{3(M_{500}/M_\text{c})^{\mu}}{1+(M_{500}/M_\text{c})^{\mu}}
+\end{equation}
+où $M_\text{c}$ et $\mu$ sont des paramètres libres contrôlant la masse pivot et le paramètre de transition, et les paramètre $\alpha$, $\delta$ et $\gamma$ définissent les pentes intérieure et extérieure et la région de transition. Les valeurs de $\alpha$ et $\gamma$ sont fixés à 0,3081 et à 1,0510 conformément aux meilleurs ajustements des simulations de \cite{Arnaud_2010} avec les observations.\\
+Pour modéliser des mesures, on considère le profil kSZ comme un signal où l'on applique une convolution sur l'Eq. \ref{eqDeltakSZ}. De plus, afin d'atténuer le bruit dû aux variations à grande échélle du rayonnement CMB, un filtre de photométrie à ouverture compensée a été appliqué au modèle. Ce filtre est une fonction de pondération $W_{\theta_\text{d}}(\theta)$ prenant la forme
+\[
+W_{\theta_\text{d}}(\theta) =
+\begin{cases}
++1 & \text{si } \theta < \theta_\text{d} \\
+-1 & \text{si } \theta_\text{d} \leq \theta < \sqrt{2}\, \theta_\text{d} \\
+0 & \text{sinon}
+\end{cases}
+\]
+où $\theta_\text{d}$ est le rayon d'ouverture. Pour $f=150\ \unit{GHz}$, on a $\theta_\text{d}=1,3\ \unit{arcmin}$
+\section{Résultats}
+\label{Section3}
+Le modèle du kSZ possède des résultats significatifs pour deux paramètres, la masse pivot $M_c$ et la pente extérieure $\delta$ du profil. $\mu$ n'a aucune influence sur le kSZ. La figure \ref{figkSZ} présente l'évolution de la température sur surface angulaire $T_\text{kSZ}$ en fonction de l'écartement angulaire $\theta$ pour différentes masses pivot. La masse pivot définit l'échelle de masse caractéristique à laquelle se produit la transition de $\beta(M_{500}$. Ce paramètre influence la rapidité avec laquelle le profil de densité du gaz s'accentue à mesure que la masse du halo augmente. Pour une masse $M_{500c}$ fixe, $\beta$ tend vers 3 pour de hautes masses pivots.
+\begin{figure}[h]
+\centering
+%\includegraphics[scale=1]{temp_ksz_profile.png}
+\caption{Evolution de l'effet SZ avec l'écartement angulaire enfonctions des paramètres $M_c$ et $\delta$ pour un redshift de $z=0,5$}
+\label{figkSZ}
+\end{figure}
+
+\section{Conclusion et perspectives}
+\label{Section4}
+A partir d'une certaine pente $\delta$ on observe physiquement que au dessus de cette valeur, les vents stellaires libérées par les AGNs sont suffisamment puissants pour avoir un effet sur la répartition du gaz. En deçà de cette valeur, la distribution du gaz suit un profil NFW par interaction gravitationnelle avec la matière noire.
+\section*{Remerciements}
+
+\medskip
+\printbibliography[
+title={Références}
+]
+\newpage
+\appendix
+\appendixpage
+\section{Profil de pression thermique}
+La pression de l'ICM obtenu par \cite{Arnaud_2010} est de la forme suivante
+\begin{equation}
+P(r) = P_{500}\; \text{p}(x), \qquad x = r/R_{500},
+\end{equation}
+où $R_{500}$ représente le rayon du halo à 500 fois la densité critique de l'univers $\rho_0$ et avec
+\begin{equation}
+\text{p}(x) = \frac{P_0}{(c_{500}x)^{\gamma}\,\big[1+(c_{500}x)^{\alpha}\big]^{(\beta-\gamma)/\alpha}}
+\end{equation}
+avec les paramètres d'ajustements optimaux $[P_0;c_{500};\gamma;\alpha;\beta] = [8,403\,h_{70}^{-3/2};\,1,177;\,0,3081;\,1,0510;\,5,4905]$ \cite{Arnaud_2010}. La pression caractéristique est
+\begin{equation}
+\begin{split}
+& P_{500} =  1,65\times10^{-3}\,E(z)^{8/3}\times \\
+& \left(\frac{M_{500}}{3\times10^{14}\,h_{70}^{-1}M_\odot}\right)^{2/3} h_{70}^{2}\;\;{\rm keV\,cm^{-3}}
+\end{split}
+\end{equation}
+Le tSZ est corrélé à une pression $P_e = (\mu/\mu_e)\,P$ avec les masses moléculaires moyennes $\mu\simeq0,59$ et $\mu_e\simeq1,14$ pour un plasma entièrement ionisé.
+
+\section{Profondeur optique}
+La profondeur optique $\tau$ le long de la ligne de visée due à la diffusion de Thompson entre l'observateur et le redshift $z$ est définit comme suit :
 \begin{equation}
 \tau(\theta) =  \sigma_\mathrm{T} \int_{\rm los} n_{\mathrm{e}}\left(\sqrt{l^2\:+\:d_A(z)^2\theta^2}\right)\deriv l\;,
 \end{equation}
@@ -151,27 +211,5 @@ La profondeur optique moyenne dans l'intervalle de valeur de redshift étudié (
 \begin{equation}
 \frac{\Delta T_{\mathrm{kSZ}}}{T_{\mathrm{CMB}}}=\tau_{\mathrm{gal}}\left(\frac{v_\mathrm{r}}{c}\right).
 \end{equation}
-où $\tau_\text{gal}$ est la profondeur optique après intégration sur une ligne de visée correspondant à la taille d'une galaxie. En effet, le SZ se prononce essentiellement au centre de l'halo et par conséquent au niveau de la galaxie le contenant. La densité numérique d'électrons dans l'équation \ref{eqDeltakSZ} peut être calculée à partir de
-\begin{equation}
-n_\mathrm{e} = \frac{X_\mathrm{H} + 1}{2 m_\mathrm{amu}} \rho_\mathrm{gas}
-\end{equation}
-où $X_\mathrm{H}$ est la fraction massique d'hydrogène dans l'univers et $m_\mathrm{amu}$ est l'unité atomique de masse. La densité massique du gaz $\rho_\mathrm{gas}$ est obtenu à partir du modèle de baryonification de \cite{schneider2025baryonificationalternativehydrodynamicalsimulations}.
-\begin{equation}
-\rho_\text{gas}(r)=\rho_\text{gas,0}\left[1+\left(\frac{r}{\theta_{c}r_{500_{c}}}\right)^{\alpha}\right]^{-\beta(M_{500})/\alpha}\left[1+\left(\frac{r}{\varepsilon r_{500c}}\right)^{\gamma}\right]^{\frac{\delta}{\gamma}}
-\end{equation}
-Ici, $\theta_c$ est le paramètre du rayon du noyau, $\epsilon$ le paramètre du rayon tronqué avec $\varepsilon=\varepsilon_0+\varepsilon_1\nu$ où $\nu=\frac{\delta_c}{\sigma(M_{500})}$ est le peak height du halo. Par simplification du modèle, j'utilise les valeurs admises dans \cite{kovac2025baryonificationiiconstrainingfeedback} avec $\varepsilon_0 = 4$, $\varepsilon_1=0,5$ et $\delta_c=1,686$. Ensuite, $\beta(M_{500})$ détermine la pente du profile tel que
-\begin{equation}
-\beta(M_{500})=\frac{3(M_{500}/M_\text{c})^{\mu}}{1+(M_{500}/M_\text{c})^{\mu}}
-\end{equation}
-où $M_\text{c}$ et $\mu$ sont des paramètres libres contrôlant la masse pivot et le paramètre de transition, et les paramètre $\alpha$, $\delta$ et $\gamma$ définissent les pentes intérieure et extérieure et la région de transition.\\
-Toutes ces équations ont été traduite en langage python avec l'utilisation spécifique de librairie pour la cosmologie, notamment \verb|astropy| pour les constantes et les conversions d'unités et \verb|colossus| pour le calcul du peak height.
-\section{Résultats}
-Le modèle du kSZ possède des résultats significatifs pour deux paramètres, la masse pivot $M_c$ et la pente extérieure $\delta$ du profil. La figure (?) présente l'évolution de la température sur surface angulaire $T_\text{kSZ}$ en fonction de l'écartement angulaire $\theta$ pour différentes masses pivot. La masse pivot joue sur la pente du terme pour le noyau, et pour une masse critique $M_{500c}$ fixe, $\beta$ tend vers 3 pour de hautes masses pivots.
-\section{Conclusion et perspectives}
-\section{Remerciements}
-
-\medskip
-\printbibliography[
-title={Références}
-]
+où $\tau_\text{gal}$ est la profondeur optique après intégration sur une ligne de visée correspondant à la taille d'une galaxie. En effet, le SZ se prononce essentiellement au centre de l'halo et par conséquent au niveau de la galaxie le contenant.
 \end{document}
