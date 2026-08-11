@@ -1,6 +1,4 @@
 import numpy as np
-import jax
-import jax.numpy as jnp
 from scipy.integrate import quad
 import matplotlib.pyplot as plt
 from astropy.cosmology import WMAP7
@@ -19,7 +17,8 @@ sigma_T = float(const.sigma_T/(u.m**2))
 uma = float(const.u/(u.kg))
 h0 = cosmo.H0/100
 
-z = 0.2
+# Parameters
+z = 0.5
 log10Mc_arr = np.linspace(11, 15, 5)
 Mc_arr = (10**log10Mc_arr)*u.solMass.to(u.kg)
 Mc = float((10**13)*u.solMass.to(u.kg))
@@ -33,10 +32,8 @@ delta = 5
 gamma = 1.0510
 theta_c = 0.3
 alpha = 0.3081
-rho_0 = 1e13*M_sun/(1e6*pc)**3 #kg/m³
+rho_0 = 1e15*M_sun/(1e6*pc)**3 #kg/m³
 vp = 1.06e-3*const.c #m/s
-r0 = 0.0
-r1 = float(1e6*u.parsec.to(u.m))
 
 def nu(M500):
     """
@@ -46,9 +43,6 @@ def nu(M500):
     
     Returns float or array-like : nu
     """
-    k = 10**np.linspace(-5.0, 2.0, 500)
-    #Pk = cosmo.matterPowerSpectrum(k)
-    #sigma_tophat = cosmo.sigma(r200(M200), z=0.0, ps_args=Pk)
     return peaks.peakHeight(M500/M_sun, z=z)
 
 def eps(M500):
@@ -75,6 +69,7 @@ def beta(M500, Mc, mu):
     return (3*(M500/Mc)**mu/(1+(M500/Mc)**mu))
 
 def R500c(M500):
+    # spherical over density radius: M500 = (4/3) pi 500 rho_c(z) R500^3
     M500c_h = M500*h0/M_sun
     R500c_h = mass_so.M_to_R(M500c_h, z, '500c')
     R500c = R500c_h/h0
@@ -85,10 +80,6 @@ def R500_kpc(M500):
 
 def R500_Mpc(M500):
     return R500c(M500)/(pc*1e6)
-
-def r500vir(M500c):
-    Mv, Rv, cv = mass_defs.changeMassDefinition(M500c, 1, z, '500c', 'vir')
-    return Rv
 
 def gas_density(r, M500, Mc, mu, delta):
     """
@@ -109,6 +100,7 @@ def gas_density(r, M500, Mc, mu, delta):
     return rho_g
 
 def e_density(r, M500, Mc, mu, delta):
+    # electron density profile : n_e = (X_H+1)/(2*m_uma)*rho_gas
     return (1.76/(2*uma))*gas_density(r, M500, Mc, mu, delta)
   
 def opt_depth(M500, Mc, mu, delta, b):
@@ -126,7 +118,7 @@ def opt_depth(M500, Mc, mu, delta, b):
 
     Returns float tau
     """
-    lmax = (5 * R500c(M500))  #m
+    lmax = (7* R500c(M500))  #m
     def integrand_per_m(l):
         r = np.sqrt(b**2 + l**2) #m
         n_e = e_density(r, M500, Mc, mu, delta)  #m⁻³
@@ -163,13 +155,11 @@ def kSZ(vp, M500, Mc, mu, delta, b):
     """
     return cmb_temperature_at_z(z)*vp/const.c*opt_depth(M500, Mc, mu, delta, b)
 
-
-
 b_grid = np.linspace(0.02, 3.0, 40)*1e6*pc  #m
 tau_grid = np.array([opt_depth(M500, Mc, mu, delta, b) for b in b_grid])
 theta = (b_grid/(cosmo.angularDiameterDistance(z=z)*1e6*pc))
 theta_arcmin = np.degrees(theta) * 60
-
+'''
 r = np.linspace(1e3*pc, 1e6*pc, 500)
 plt.figure()
 plt.loglog(r/(1e3*pc),
@@ -177,26 +167,28 @@ plt.loglog(r/(1e3*pc),
 plt.xlabel(r'$r [kpc]$'); plt.ylabel(r'$n_e(r)$ [m$^{-3}$]')
 plt.title(f'Electron density, M500={M500/M_sun:.0e}, z={z}'); plt.savefig('ksz_ne_profile.png', dpi=130)
 plt.show()
+'''
 
-
-plt.figure()
+plt.figure(figsize=(9,10,"cm"))
 plt.semilogy(theta_arcmin, tau_grid)
-plt.xlabel(r'$\theta$ [arcmin]'); plt.ylabel(r'Optical depth $\tau$')
-plt.title(f'kSZ profile, M500={M500/M_sun:.0e} Msun, z={z}')
+plt.xlabel(r'$\theta$ [arcmin]'); plt.ylabel(r'Profondeur optique $\tau$')
+plt.tight_layout()
 plt.savefig('ksz_tau_profile.png', dpi=130)
 plt.show()
 
 
-fig, axes = plt.subplots(1, 2, figsize=(25, 125/12))
+fig, axes = plt.subplots(2, 1, figsize=(9, 16.5, "cm"))
 
 ax = axes[0]
 gradient = np.linspace(0, 1, len(Mc_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(Mc_arr))]
-ax.set_xlabel(r'$\theta$ [arcmin]')
-ax.set_title(rf'Pivot mass $M_c$''\n'
-            rf'Fixed parameters :' '\n' r'$\log{M_{500}/M_☉} =$' f'{np.log10(M500/M_sun)}' '\n' rf'$\mu =$ {mu}' '\n' rf'$\delta=$ {delta}')
-#ax.set_xlim
-#ax.set_ylim
+ax.set_ylabel(r'$T_\text{kSZ}\, [\mu$K.arcmin$^2$]')
+#ax.set_title(rf'Masse pivot $M_c$''\n'
+            #rf'Paramètres fixes :' '\n' rf'$\mu =$ {mu}' '\n' rf'$\delta=$ {delta}', fontsize=14)
+#ax.set_title(rf'Masse pivot $M_c$''\n'
+            #r'Paramètres fixes : $\mu =$' f'{mu},  ' rf'$\delta=$ {delta}')
+ax.set_xlim(0.3, 12.2)
+ax.set_ylim(2e-5, auto=True)
 for mass in Mc_arr:
     TkSZ = np.array([kSZ(vp, M500, mass, mu, delta, b)*1e6 for b in b_grid])
     tauint_SZ = TkSZ*0
@@ -204,15 +196,16 @@ for mass in Mc_arr:
         for j in range(i):
             tauint_SZ[i] += ((R500_kpc(M500)*10**(np.log10(theta[j])+0.05))**2-(R500_kpc(M500)*10**(np.log10(theta[j])-0.05))**2)*np.pi*TkSZ[j]
     ax.semilogy(theta_arcmin, tauint_SZ, label=r'$\log{M_c/M_☉}$ = ' f'{np.log10(mass/M_sun)}', color=colors[int(np.where(Mc_arr==mass)[0][0])])
-ax.legend()
+ax.legend(fontsize=8)
 
 ax = axes[1]
 gradient = np.linspace(0, 1, len(delta_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(delta_arr))]
 ax.set_xlabel(r'$\theta$ [arcmin]')
-ax.set_title(rf'Outer slope $\delta$''\n'
-            rf'Fixed parameters :' '\n' r'$\log{M_{500}/M_☉} =$' f'{np.log10(M500/M_sun)}' '\n' r'$\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)}' '\n' rf'$\mu=$ {mu}')
-#ax.set_xlim
+ax.set_ylabel(r'$T_\text{kSZ}\, [\mu$K.arcmin$^2$]')
+#ax.set_title(rf'Pente extérieure $\delta$''\n'
+            #r'Paramètres fixés : $\log{M_c/M_☉} =$' f'{np.log10(Mc/M_sun)},' rf'  $\mu=$ {mu}')
+ax.set_xlim(0.3, 12.2)
 #ax.set_ylim
 for slope in delta_arr:
     TkSZ = np.array([kSZ(vp, M500, Mc, mu, slope, b)*1e6 for b in b_grid])
@@ -221,13 +214,11 @@ for slope in delta_arr:
         for j in range(i):
             tauint_SZ[i] += ((R500_kpc(M500)*10**(np.log10(theta[j])+0.05))**2-(R500_kpc(M500)*10**(np.log10(theta[j])-0.05))**2)*np.pi*TkSZ[j]
     ax.semilogy(theta_arcmin, tauint_SZ, label=r'$\delta$ = ' f'{slope}', color=colors[int(np.where(delta_arr==slope)[0][0])])
-ax.legend()
+ax.legend(fontsize=8)
 
-plt.suptitle(r'kSZ effect evolution with angular line of sight and other parameters at redshift $z =$' f'{z}')
 plt.tight_layout()
 plt.savefig('temp_ksz_profile.png', dpi=130)
 plt.show()
-
 
 
 

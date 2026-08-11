@@ -2,28 +2,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
 import astropy.constants as const
-from astropy.constants import sigma_T, m_e, c, k_B, G, m_p
+from astropy.constants import sigma_T, m_e, c, k_B, m_p
 from astropy.cosmology import Planck18 as cosmo
 from scipy.integrate import quad
 
-plt.rcParams.update({'figure.figsize': (10, 6), 'font.size': 11, 'axes.grid': True,
+plt.rcParams.update({'figure.figsize': (9, 10, "cm"), 'font.size': 11, 'axes.grid': True,
                      'grid.alpha': 0.3})
-
-def cmb_temperature_at_z(z=0):
-    """
-    Dependencies of the CMB temperature with redshift
-    
-    input z=0 by default
-    
-    Returns float: cmb_temperature
-    """
-    T0 = 2.725
-    return T0 * (1 + z)
 
 
 h_planck = const.h.value     # J s (NIST CODATA 2022, exact)
 k_B = k_B.value
-z = 0.55
+z = 0.5
+
+def cmb_temperature_at_z(z=0):
+    #Dependencies of the CMB temperature with redshift : z=0 by default
+    T0 = 2.725
+    return T0 * (1 + z)
 
 nu = np.linspace(30e9, 600e9, 500)       # Hz
 x = (h_planck * nu) / (k_B * cmb_temperature_at_z(z))
@@ -44,38 +38,23 @@ def R500_of_M(M500, z):
     return (R3 ** (1/3)).to(u.Mpc)
 
 def P500_of_M(M500, z):
+    # spherical overdensity pressure
     E = cosmo.efunc(z)
     M14 = (M500 / (3e14 * h70**-1 * u.Msun)).to_value(u.dimensionless_unscaled)
     return 1.65e-3 * E**(8/3) * M14**(2/3) * h70**2 * u.Unit('keV cm-3')
 
 def P_thermal(r, M500, z):
+    # thermal pressure
     x = (r / R500_of_M(M500, z)).to_value(u.dimensionless_unscaled)
     p = P0 / ((c500 * x)**gamma * (1 + (c500 * x)**alpha)**((beta - gamma)/alpha))
     return P500_of_M(M500, z) * p
 
 def E(redshift):
+    # normalized Hubble parameter
     return(np.sqrt(cosmo.Om0*(1+redshift)**3+(1-cosmo.Om0)))
 
-M500 = 5e14 * u.Msun
-R500 = R500_of_M(M500, z)
-nu_null = nu[np.argmin(np.abs(f_x))] / 1e9
-
-plt.figure()
-plt.plot(nu/1e9, f_x)
-plt.axhline(0, color='k', lw=0.8)
-plt.axvline(nu_null, color='tomato', ls='--', label=f'null at {nu_null:.0f} GHz')
-plt.xlabel('frequency [GHz]'); plt.ylabel(r'$f(x)=x\coth(x/2)-4$')
-plt.title('tSZ spectral distortion (non-relativistic)')
-plt.legend()
-plt.savefig('tsz_spectral_function.png', dpi=130)
-plt.show()
-
-
-logM500_arr = np.linspace(11, 15, 5)
-M500_arr = (10**logM500_arr) * u.Msun
 pref = (sigma_T*1e4 / (m_e * c**2)).to(u.cm**2 / u.keV)   # sigma_T / m_e c^2  [cm^2/keV]
 Mpc_in_cm = (1 * u.Mpc).to_value(u.cm)
-
 def y_of_b(b_Mpc, M500):
     # y(b) = (sigma_T/m_e c^2) * integral of electron pressure along the line of sight.
     lmax = (5 * R500).to_value(u.Mpc)
@@ -86,31 +65,45 @@ def y_of_b(b_Mpc, M500):
     val, _ = quad(integrand_per_cm, -lmax, lmax, limit=100)  # cm^-1 integrated over Mpc
     return val * Mpc_in_cm                                    # dimensionless
 
+nu_null = nu[np.argmin(np.abs(f_x))] / 1e9
+plt.figure(figsize=(9,10, "cm"))
+plt.plot(nu/1e9, f_x)     #frequency profile
+plt.axhline(0, color='k', lw=0.8)
+plt.axvline(nu_null, color='tomato', ls='--', label=f'nul à {nu_null:.0f} GHz')
+plt.xlabel('Fréquence [GHz]'); plt.ylabel(r'$f(x)=x\coth(x/2)-4$')
+plt.legend()
+plt.tight_layout()
+plt.savefig('tsz_spectral_function.png', dpi=130)
+plt.show()
+
+M500 = 5e14 * u.Msun
+R500 = R500_of_M(M500, z)
+r = np.linspace(1, 1e3, 500)*u.Mpc
+plt.figure(figsize=(9,10, "cm"))
+plt.loglog(r*1e3,
+           P_thermal(r, M500, z))
+plt.xlabel(r'$r$ [kpc]'); plt.ylabel(r'$P_e(r)$ [keV.cm$^{-3}$]')
+plt.tight_layout()
+plt.savefig('tsz_Pe_profile.png', dpi=130)
+plt.show()
+
 b_grid = np.linspace(0.02, 3.0, 40)            # Mpc
 y_grid = np.array([y_of_b(b, M500) for b in b_grid])
 theta = (b_grid * u.Mpc / cosmo.angular_diameter_distance(z)).to_value(u.dimensionless_unscaled)
 theta_arcmin = np.degrees(theta) * 60
-
-
-plt.figure()
-plt.semilogy(theta_arcmin, y_grid)
+plt.figure(figsize=(9,13, "cm"))
+plt.semilogy(theta_arcmin, y_grid)             #tsz profile
 plt.xlabel(r'$\theta$ [arcmin]'); plt.ylabel('Compton $y$')
-plt.title(f'tSZ profile, M500={M500:.0e} Msun, z={z}')
+plt.tight_layout()
 plt.savefig('tsz_y_profile.png', dpi=130)
 plt.show()
 
-'''
-Y = 2 * np.pi * np.trapezoid(y_grid * theta, theta)
-plt.figure()
-plt.semilogy(theta_arcmin, Y)
-plt.xlabel(r'$\theta$ [arcmin]'); plt.ylabel(r'$Y_{500}$')
-plt.title(f'Integrated Compton y-parameter Y profile, M500={M500:.0e} $M_☉$, z={z}')
-plt.show()
-'''
-
+"""
 nu_cst = 150e9       # Hz
 x = (h_planck * nu_cst) / (k_B * cmb_temperature_at_z(z))
 f_x_cst = x * np.cosh(x/2) / np.sinh(x/2) - 4.0
+logM500_arr = np.linspace(11, 15, 5)
+M500_arr = (10**logM500_arr) * u.Msun
 
 gradient = np.linspace(0, 1, len(M500_arr))
 colors = [(gradient[i], gradient[0], gradient[0]) for i in range(len(M500_arr))]
@@ -136,3 +129,4 @@ plt.suptitle(r'tSZ effect evolution with critical mass $M_{500}$ at redshift $z 
 plt.tight_layout()
 plt.savefig('temp_tsz_profile.png', dpi=130)
 plt.show()
+"""
